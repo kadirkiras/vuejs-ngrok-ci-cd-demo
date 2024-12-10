@@ -17,7 +17,6 @@ jobs:
         with:
           node-version: 18
 
-      # Backend'i çalıştır
       - name: Install Backend Dependencies
         run: |
           cd backend
@@ -28,13 +27,11 @@ jobs:
           cd backend
           nohup node index.js &
 
-      # ngrok başlat
-      - name: Start ngrok
+      - name: Start ngrok and persist
         run: |
-          npx ngrok http 3001 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
+          nohup npx ngrok http 3001 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
 
-      # ngrok URL'sini al ve ekrana bas
-      - name: Get ngrok URL
+      - name: Wait and Get ngrok URL
         run: |
-          echo "PR Environment is ready at:"
+          sleep 10 # ngrok'un başlatılması için bekleme
           curl -s http://127.0.0.1:4040/api/tunnels | jq -r .tunnels[0].public_url
