@@ -1,0 +1,40 @@
+name: Deploy PR Environment with ngrok
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Backend'i çalıştır
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Start Backend
+        run: |
+          cd backend
+          nohup node index.js &
+
+      # ngrok başlat
+      - name: Start ngrok
+        run: |
+          npx ngrok http 3001 --authtoken ${{ secrets.NGROK_AUTH_TOKEN }} &
+
+      # ngrok URL'sini al ve ekrana bas
+      - name: Get ngrok URL
+        run: |
+          echo "PR Environment is ready at:"
+          curl -s http://127.0.0.1:4040/api/tunnels | jq -r .tunnels[0].public_url
