@@ -7,7 +7,7 @@ app.get("/api", (req, res) => {
 });
 
 app.get("/api/echo", (req, res) => {
-  res.json({ message: "Hello From Echo" });
+  res.json({ message: "Hello From Echov2" });
 });
 
 app.listen(port, () => {
